@@ -1,4 +1,4 @@
-import polyIsComplex from "../../src/math/poly_complex"
+import { polyIsComplex } from "../../src/math/poly_complex"
 
 test("Test for complex polygons correctness", () => {
   expect(

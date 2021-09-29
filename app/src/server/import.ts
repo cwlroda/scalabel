@@ -76,21 +76,26 @@ export function convertItemToImport(
           )
         }
 
-        const [importedLabel, importedShapes] = convertLabelToImport(
-          labelExport,
-          itemIndex,
-          sensorId,
-          categories,
-          attributes
-        )
+        try {
+          const [importedLabel, importedShapes] = convertLabelToImport(
+            labelExport,
+            itemIndex,
+            sensorId,
+            categories,
+            attributes
+          )
 
-        if (tracking) {
-          importedLabel.track = labelExport.id.toString()
-        }
+          if (tracking) {
+            importedLabel.track = labelExport.id.toString()
+          }
 
-        labels[labelId] = importedLabel
-        for (const indexedShape of importedShapes) {
-          shapes[indexedShape.id] = indexedShape
+          labels[labelId] = importedLabel
+          for (const indexedShape of importedShapes) {
+            shapes[indexedShape.id] = indexedShape
+          }
+        } catch (err) {
+          window.alert(err)
+          continue
         }
       }
     }
@@ -189,9 +194,11 @@ function convertLabelToImport(
     shapes = [makeRect(labelExport.box2d)]
   } else if (labelExport.poly2d !== null && labelExport.poly2d !== undefined) {
     const polyExport = labelExport.poly2d[0]
+
     labelType = polyExport.closed
       ? LabelTypeName.POLYGON_2D
       : LabelTypeName.POLYLINE_2D
+
     shapes = polyExport.vertices.map((vertex, i) =>
       makePathPoint2D({
         x: vertex[0],
